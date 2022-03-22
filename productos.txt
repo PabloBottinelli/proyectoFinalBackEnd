@@ -1,0 +1,1 @@
+[{"title":"Escuadra","price":323.45,"id":1},{"title":"Calculadora","price":234.56,"id":2},{"title":"Globo terraqueo","price":234.56,"id":3},{"title":"Paleta pintura","price":234.56,"id":4},{"title":"Reloj","price":234.56,"id":5},{"title":"Agenda","price":234.56,"id":6}]
