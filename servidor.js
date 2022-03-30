@@ -1,58 +1,39 @@
-const express = require('express')
-const fs = require('fs')
+import express from 'express'
+import { Router } from 'express'
+import Contenedor from './contenedorProductos.js'
+const contenido = new Contenedor([])
+
 const app = express()
-const PORT = 8080
-const Contenedor = require('./contenedor.js')
-const contenido = new Contenedor('./productos.txt')
+const router = Router()
 
-async function getRandom(){
-    try{
-        const productos = await contenido.getAll()
-        const max = productos.length
-        const number = Math.floor(Math.random() * (max - 1)) + 1
-        const producto = await contenido.getById(number)
-        return producto
-    }
-    catch(err){
-        console.log(err)
-    }
-}
+app.use(express.static('public'))
+app.use(express.json())
+app.use(express.urlencoded( {extended: true} ))
+app.use('/api', router)
 
-const server = app.listen(PORT, () => {
-    console.log(`Servidor http escuchando en el puerto ${server.address().port}`)
-})
-server.on("error", error => console.log(`Error en servidor ${error}`))
+// const productos = [{"title":"Agenda","price":234.56,"thumbnail":"google.com","id":1},{"title":"Bicicleta","price":500,"thumbnail":"google.com","id":2},{"title":"Heladera","price":1500,"thumbnail":"google.com","id":3}]
 
-app.get('/', (req, res) => {
-    res.send('<h1> Bienvenidos <h1>')
-})
-
-app.get('/productos', (req, res) => {
+router.get('/productos', (req, res) =>{
     contenido.getAll().then(resp => res.send(`<p> ${JSON.stringify(resp)} <p>`))
 })
 
-app.get('/productoRandom', (req, res) => {
-    getRandom().then(resp => res.send(`<p> ${JSON.stringify(resp)} <p>`))
+router.get('/productos/:id', (req, res) =>{
+    contenido.getById(parseInt(req.params.id)).then(resp => res.send(`<p> ${JSON.stringify(resp)} <p>`))
 })
 
+router.post('/productos', (req, res) =>{
+    contenido.save(req.body.nombre, req.body.precio, req.body.thumbnail).then(resp => res.send(`<p> ${JSON.stringify(resp)} <p>`))
+})
 
-// app.get('/productoRandom', (req, res) => {
-//     async function getRandom(){
-//         try{           
-//             const contenido = await fs.promises.readFile(`./productos.txt`, 'utf-8')
-//             const products = JSON.parse(contenido);
-//             console.log(products)
-//             const max = products.length
-//             const number = Math.floor(Math.random() * (max - 1)) + 1;
-//             const producto = products.find(e => e.id == number)
-//             res.send(`<h1> ${JSON.stringify(producto)} <h1>`)
+router.put('/productos/:id', (req, res) =>{
+    contenido.changeById(parseInt(req.params.id), req.body.nombre, req.body.precio, req.body.thumbnail).then(resp => res.send(`<p> ${JSON.stringify(resp)} <p>`))
+})
 
-//         }
-//         catch(err){ 
-//             console.log(err)
-//             res.send(`<h1> No se encontro <h1>`)
-//         }
-//     }
-//     getRandom()
-// })
+router.delete('/productos/:id', (req, res) =>{
+    contenido.deleteById(parseInt(req.params.id)).then(resp => res.send(`<p> ${JSON.stringify(resp)} <p>`))
+})
 
+const server = app.listen(8080, () => {
+    console.log(`Servidor http escuchando en el puerto ${server.address().port}`)
+})
+server.on("error", error => console.log(`Error en servidor ${error}`))
