@@ -1,8 +1,8 @@
 export default class Contenedor{
-    constructor(archivo){
-        this.producto = archivo
+    constructor(){
+        this.producto = []
     }
-
+    
     async getAll(){
         try{ 
             return this.producto

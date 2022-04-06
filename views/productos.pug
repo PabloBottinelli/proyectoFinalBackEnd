@@ -1,0 +1,19 @@
+html 
+    head
+        title='productos'
+    body 
+        h1='Productos'
+        table(style='background-color: blueviolet; width: 50%; margin-bottom: 50px;')
+            tr(style="text-align: left;")
+                th(style="color:white")='Nombre'
+                th(style="color:white")='Precio'
+                th(style="color:white")='Foto'
+            each producto in resp 
+                tr 
+                    td(style="color:white")=producto.title
+                    td(style="color:white")=producto.price
+                    td(style="color:white")=producto.thumbnail
+            else
+                h2='No hay productos'
+        form(action='/api')
+            input(type='submit' value='Cargar Productos')

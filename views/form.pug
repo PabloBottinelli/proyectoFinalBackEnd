@@ -1,0 +1,7 @@
+form(action='api/productos' method='POST')
+    input(type='text' name='nombre' value='Titulo' required)
+    input(type="number" name='precio' value='Precio' required)
+    input(type="text" name='thumbnail' value='Link' required)
+    input(type="submit" value='Subir Producto')
+form(action='api/productos' method='get')
+    input(type="submit" value='Ver Productos')

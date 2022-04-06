@@ -1,0 +1,2 @@
+El motor que mas me gusta es ejs, su sintaxis es la mas parecida a la de html normal y me sirve mas para aplicar mis conocimientos de front end.
+Ademas es mas facil de usar condicionales, ya que por ejemplo en handlebars solo le podes pasar valores true o false, lo que complica el desarrollo del codigo
