@@ -1,4 +1,5 @@
-export default class Contenedor{
+// export default class Contenedor{}
+class Contenedor{
     constructor(){
         this.producto = []
     }
@@ -80,4 +81,4 @@ export default class Contenedor{
         }
     }
 }
-
+module.exports = Contenedor

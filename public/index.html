@@ -1,18 +1,54 @@
-<!-- <!DOCTYPE html>
-<html lang="en">
+<!DOCTYPE html>
+<html lang="es">
+
 <head>
     <meta charset="UTF-8">
-    <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Subir Archivo</title>
+    <title>Productos</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/handlebars.js/4.7.7/handlebars.min.js" integrity="sha512-RNLkV3d+aLtfcpEyFG8jRbnWHxUqVZozacROI4J2F1sTaDqo1dPQYs01OMi1t1w9Y2FdbSCDSQ2ZVdAC8bzgAg==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+    <script src="/socket.io/socket.io.js"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Oswald:wght@200;300;400;500;600;700&family=Shippori+Antique+B1&display=swap" rel="stylesheet">
 </head>
-<body>
-    <form action="api/productos" method="POST">
-        <input type="text" name="nombre" value="Titulo" required>
-        <input type="number" name="precio" value="Precio" required>
-        <input type="text" name="thumbnail" value="Link" required>
-        <input type="submit" value="Subir Producto">
-    </form>
+
+<body style="font-family: 'Oswald', sans-serif;">
+    <section style="width: 70%; margin: auto; border: 1px solid rgb(228, 228, 228); border-radius: 40px; text-align: center;">
+        <h2>Ingrese datos</h2>
+        <form id="formulario-productos">
+            <div>
+                <label for="title" style="font-size: 20px; color:rgb(219, 33, 108); margin-right: 20px;">Título</label>
+                <input id="title" type="text" name="title" style="width: 200px; border-radius: 10px; padding: 5px; border: 1px solid rgb(173, 173, 173);" required>
+            </div>
+            <div >
+                <label for="price" style="font-size: 20px; color:rgb(219, 33, 108); margin-right: 20px;">Precio</label>
+                <input id="price" type="number" name="price" style="width: 200px; border-radius: 10px; padding: 5px; border: 1px solid rgb(173, 173, 173);" required>
+            </div>
+            <div >
+                <label for="thumbnail" style="font-size: 20px; color:rgb(219, 33, 108); margin-right: 20px;">Ícono</label>
+                <input id="thumbnail" type="text" name="thumbnail" style="width: 200px; border-radius: 10px; padding: 5px; border: 1px solid rgb(173, 173, 173);" required>
+            </div>
+            
+            <button style="font-size: 20px; background-color:rgb(33, 219, 67); border-radius:10px; padding: 5px; color: white; border: none; margin-top: 20px; cursor: pointer;">Enviar</button>
+        </form>
+
+        <div id="product-list" style="margin-bottom: 50px;"></div>
+    </section>
+
+    <section style="width: 70%; margin: auto; border: 1px solid rgb(228, 228, 228); border-radius: 40px; text-align: center;">
+        <h2>Chat</h2>
+        <form id="chat">
+            <label for="username" style="font-size: 20px; color:rgb(219, 33, 108); margin-right: 20px;"><b>Email</b></label>
+            <input id="mail" type="email" name="username" style="width: 200px; border-radius: 10px; padding: 5px; border: 1px solid rgb(173, 173, 173);" required>
+
+            <label for="message" style="font-size: 20px; color:rgb(219, 33, 108); margin-right: 20px;"><b>Message</b></label>
+            <input id="contenido" type="text" name="message" style="width: 200px; border-radius: 10px; padding: 5px; border: 1px solid rgb(173, 173, 173);" required>
+            
+            <button class="btn btn-success mt-3 mb-5" style="font-size: 20px; background-color:rgb(33, 219, 67); border-radius:10px; padding: 5px; color: white; border: none; margin-top: 20px; cursor: pointer;">Enviar</button>
+        </form>
+
+        <div id="mensajes"></div>
+    </section>
+    
+    <script src="./js/main.js"></script>
 </body>
+
 </html>
- -->

@@ -1,0 +1,25 @@
+<h2>Productos</h2>
+{{#if products.length}}
+
+<table style="background-color: blueviolet; width: 70%; margin-bottom: 50px; margin: auto; border-radius: 30px; padding: 30px; text-align: left;">
+    <thead>
+        <tr style="text-align: left;">
+            <th style="color:white; font-size: 20px">Nombre</th>
+            <th style="color:white; font-size: 20px">Precio</th>
+            <th style="color:white; font-size: 20px">Foto</th>
+        </tr>
+    </thead>
+    <tbody>
+        {{#each products}}
+            <tr>
+                <td style="color:white">{{this.title}}</td>
+                <td style="color:white">{{this.price}}</td>
+                <td style="color:white"><img src={{this.thumbnail}} alt="" style="width: 50px;"></td>
+            </tr>
+        {{/each}}
+    </tbody>
+</table>
+
+{{else}}
+    <h3>No hay productos</h3>
+{{/if}}
