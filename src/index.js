@@ -1,10 +1,16 @@
 const fs = require('fs')
 const express = require('express')
 const app = express()
-const Contenedor = require('./contenedorProductos.js')
-var contenido = new Contenedor()
 const { Router } = express
 const adm = require('./middleware/middleware.js')
+
+const contenedorProductos = require('./contenedorProductos.js')
+const prods = [{"title": "Camara","price": 5000,"thumbnail": "https://cdn3.iconfinder.com/data/icons/education-and-school-8/48/Camera-128.png","id": 1,"timestamp": "19/04/2022, 10:30:59 PM","description": "Camara profesional","code": 100211,"stock": 100},{"title": "PC","price": 6500,"thumbnail": "https://cdn3.iconfinder.com/data/icons/education-and-school-8/48/Computer-128.png","id": 2,"timestamp": "19/04/2022, 10:04:57 PM","description": "PC Gamer","code": 1002143,"stock": 100},{"title": "Lampara","price": 1000,"thumbnail": "https://cdn3.iconfinder.com/data/icons/education-and-school-8/48/Light-128.png","id": 3,"timestamp": "19/04/2022, 10:04:57 PM","description": "Lampara de estudio","code": 10143404,"stock": 100}]
+var contenidoProductos = new contenedorProductos(prods)
+
+const contenedorCarritos = require('./contenedorCarritos.js')
+const carritos = [{"id": 1,"timestamp": "19/04/2022, 10:05:58 PM","products": []}]
+var contenidoCarritos = new contenedorCarritos(carritos)
 
 const routerProductos = Router()
 const routerCarrito = Router()
@@ -17,114 +23,24 @@ app.use('/api/carrito', routerCarrito)
 
 // Rutas Productos
 
-let productos = []
-
 routerProductos.get('/:id?', async (req, res) => {
   if(req.params.id){
-    productos = await fs.promises.readFile('./src/productos.txt')
-    const productosJSON = JSON.parse(productos)
-    let { id } = req.params
-    let producto = productosJSON.find( x => x.id === parseInt(id))
-    res.json(producto ? { producto: producto } : { error : 'No se encontró el producto' })
+    contenidoProductos.getById(req.params.id).then(resp => res.send(resp))
   }else{
-    productos = await fs.promises.readFile('./src/productos.txt')
-    res.send(JSON.parse(productos))
+    contenidoProductos.getAll().then(resp => res.send(resp))
   }
 })
 
 routerProductos.post('/', adm, async (req, res) => {
-  try{
-    productos = await fs.promises.readFile('./src/productos.txt')
-  }catch(err){
-    throw new Error(`Error: ${err.message}`)
-  }
-
-  const productosJSON = JSON.parse(productos)
-
-  let { title, price, thumbnail, description, code, stock } = req.body
-
-  const crearId = () => {
-    const i = productosJSON.length - 1 // no agarro directamente el length del array y le sumo 1 para el id del nuevo producto, porque si hago eso hay un error, al eliminar un elemento con deleteById y agregar uno nuevo, va a repetir el id del ultimo elemento del array. Asi que mejor agarro el id del ultimo elemento del array y le sumo 1
-    const id = productosJSON[i].id +  1
-    return id
-  }
-
-  const producto = {
-    title: title,
-    price: price,
-    thumbnail: thumbnail,
-    id: crearId(),
-    timestamp: new Date().toLocaleString(),
-    description: description,
-    code: code,
-    stock: stock
-  }
-  productosJSON.push(producto)
-
-  try {
-    await fs.promises.writeFile('./src/productos.txt', JSON.stringify(productosJSON, null, 2))
-  }catch(err){
-    throw new Error(`Error: ${err.message}`)
-  }
-  
-  res.json({ agregado: producto })
+  contenidoProductos.save(req.body).then(resp => res.json(resp))
 })
 
 routerProductos.delete('/:id', adm, async (req, res) => {
-  try{
-    productos = await fs.promises.readFile('./src/productos.txt')
-  }catch(err){
-    throw new Error(`Error: ${err.message}`)
-  }
-  const productosJSON = JSON.parse(productos)
-  let { id } = req.params
-  let producto = productosJSON.find(x => x.id === parseInt(id))
-
-  if(producto){
-    const indexDelProducto = productosJSON.indexOf(producto)
-    const eliminar = productosJSON[indexDelProducto]
-    productosJSON.splice(indexDelProducto, 1)
-    try {
-      await fs.promises.writeFile('./src/productos.txt', JSON.stringify(productosJSON, null, 2))
-    }catch(err){
-      throw new Error(`Error: ${err.message}`)
-    }
-    res.json({ eliminado: eliminar })
-  }else{
-    res.json({ error: 'No se encontró'})
-  }
+  contenidoProductos.deleteById(req.params.id).then(resp => res.json(resp))
 })
 
 routerProductos.put('/:id', adm, async (req, res) => {
-  try{
-    productos = await fs.promises.readFile('./src/productos.txt')
-  }catch(err){
-    throw new Error(`Error: ${err.message}`)
-  }
-  const productosJSON = JSON.parse(productos)
-
-  let { id } = req.params
-  let producto = productosJSON.find( x => x.id === parseInt(id))
-  if(producto){
-    const indexDelProducto = productosJSON.indexOf(producto)
-    productosJSON[indexDelProducto].title = req.body.title
-    productosJSON[indexDelProducto].price = req.body.price
-    productosJSON[indexDelProducto].thumbnail = req.body.thumbnail
-    productosJSON[indexDelProducto].timestamp = new Date().toLocaleString()
-    productosJSON[indexDelProducto].description = req.body.description
-    productosJSON[indexDelProducto].code = req.body.code
-    productosJSON[indexDelProducto].stock = req.body.stock
-
-    try {
-      await fs.promises.writeFile('./src/productos.txt', JSON.stringify(productosJSON, null, 2))
-    }catch(err){
-      throw new Error(`Error: ${err.message}`)
-    }
-    
-    res.json({ seModifico: productosJSON[indexDelProducto] })
-  }else{
-    res.json({ error: 'No se encontró'})
-  }
+  contenidoProductos.changeById(req.params.id, req.body).then(resp => res.json(resp))
 })
 
 // Rutas Carritos
@@ -132,134 +48,27 @@ routerProductos.put('/:id', adm, async (req, res) => {
 let carts = []
 
 routerCarrito.get('/', async (req, res) => {
-  carts = await fs.promises.readFile('./src/carritos.txt')
-  res.send(JSON.parse(carts))
+  contenidoCarritos.getAll().then(resp => res.send(resp))
 })
 
 routerCarrito.get('/:id/productos', async (req, res) => {
-  try{
-    carts = await fs.promises.readFile('./src/carritos.txt')
-  }catch(err){
-    throw new Error(`Error: ${err.message}`)
-  }
-  const carritosJSON = JSON.parse(carts)
-  let { id } = req.params
-  let carrito = carritosJSON.find( x => x.id === parseInt(id))
-  res.json(carrito ? { productosCarrito: carrito.products } : { error : 'No se encontró el carrito' })
+  contenidoCarritos.getProducts(req.params.id).then(resp => res.send(resp))
 })
 
 routerCarrito.post('/', async (req, res) => {
-  try{
-    carts = await fs.promises.readFile('./src/carritos.txt')
-  }catch(err){
-    throw new Error(`Error: ${err.message}`)
-  }
-  const carritosJSON = JSON.parse(carts)
-  const crearId = () => {
-    const i = carritosJSON.length - 1 
-    const id = carritosJSON[i].id +  1
-    return id
-  }
-  const carrito = {
-    id: crearId(),
-    timestamp: new Date().toLocaleString(),
-    products: []
-  }
-  
-  carritosJSON.push(carrito)
-  try {
-    await fs.promises.writeFile('./src/carritos.txt', JSON.stringify(carritosJSON, null, 2))
-  }catch(err){
-    throw new Error(`Error: ${err.message}`)
-  }
-  res.json({ carritoCreado: carrito })
+  contenidoCarritos.save().then(resp => res.send(resp))
 })
 
 routerCarrito.post('/:id/productos', async (req, res) => {
-  try{
-    carts = await fs.promises.readFile('./src/carritos.txt')
-    productos = await fs.promises.readFile('./src/productos.txt')
-  }catch(err){
-    throw new Error(`Error: ${err.message}`)
-  }
-  const carritosJSON = JSON.parse(carts)
-  const productosJSON = JSON.parse(productos)
-  let { id } = req.params
-  let { id_prod } = req.body
-  let carrito = carritosJSON.find( x => x.id === parseInt(id))
-  let producto = productosJSON.find( x => x.id === parseInt(id_prod))
-
-  if(carrito && producto){
-    const indexDelCarrito = carritosJSON.indexOf(carrito)
-    carritosJSON[indexDelCarrito].products.push(producto)
-
-    try {
-      await fs.promises.writeFile('./src/carritos.txt', JSON.stringify(carritosJSON, null, 2))
-    }catch(err){
-      throw new Error(`Error: ${err.message}`)
-    }
-    res.json({ agregado: carritosJSON[indexDelCarrito].products })
-  }else{
-    res.json({ error: 'No se encontro el carrito y/o el producto'})
-  }
+  contenidoProductos.getById(req.body.id_prod).then(resp => resp.error ? res.json(resp) : contenidoCarritos.addProduct(req.params.id, resp).then(resp => res.json(resp)))
 })
 
 routerCarrito.delete('/:id', async (req, res) => {
-  try{
-    carts = await fs.promises.readFile('./src/carritos.txt')
-  }catch(err){
-    throw new Error(`Error: ${err.message}`)
-  }
-  const carritosJSON = JSON.parse(carts)
-  let { id } = req.params
-  let carrito = carritosJSON.find( x => x.id === parseInt(id))
-
-  if(carrito){
-    const indexDelCarrito = carritosJSON.indexOf(carrito)
-    const eliminar = carritosJSON[indexDelCarrito]
-    carritosJSON.splice(indexDelCarrito, 1)
-    try {
-      await fs.promises.writeFile('./src/carritos.txt', JSON.stringify(carritosJSON, null, 2))
-    }catch(err){
-      throw new Error(`Error: ${err.message}`)
-    }
-    res.json({ eliminado: eliminar })
-  }else{
-    res.json({ error: 'No se encontró'})
-  }
+  contenidoCarritos.deleteById(req.params.id).then(resp => res.json(resp))
 })
 
 routerCarrito.delete('/:id/productos/:id_prod', async (req, res) => {
-  try{
-    carts = await fs.promises.readFile('./src/carritos.txt')
-  }catch(err){
-    throw new Error(`Error: ${err.message}`)
-  }
-  const carritosJSON = JSON.parse(carts)
-  let { id, id_prod } = req.params
-  let carrito = carritosJSON.find( x => x.id === parseInt(id))
-
-  if(carrito){
-    const indexDelCarrito = carritosJSON.indexOf(carrito)
-    const producto = carritosJSON[indexDelCarrito].products.find( x => x.id === parseInt(id_prod))
-    
-    if(producto){
-      const indexDelProducto = carritosJSON[indexDelCarrito].products.findIndex( x => x.id === parseInt(id_prod))
-      const eliminar = carritosJSON[indexDelCarrito].products[indexDelProducto]
-      carritosJSON[indexDelCarrito].products.splice(indexDelProducto, 1)
-
-      try {
-        await fs.promises.writeFile('./src/carritos.txt', JSON.stringify(carritosJSON, null, 2))
-      }catch(err){
-        throw new Error(`Error: ${err.message}`)
-      }
-      res.json({ eliminado: eliminar })
-    }else{
-      res.json({ error: 'No se encontro el producto en el carrito' })
-    }
-  }else{
-    res.json({ error: 'No se encontro el carrito' })
-  }
+  contenidoCarritos.deleteProduct(req.params.id, req.params.id_prod).then(resp => res.json(resp))
 })
 
 app.get('*', function (req, res) {
