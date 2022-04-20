@@ -1,4 +1,3 @@
-// export default class Contenedor{}
 class Contenedor{
     constructor(){
         this.producto = []
