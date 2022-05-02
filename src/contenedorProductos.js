@@ -2,9 +2,8 @@ const { db } = require('../db/database.js')
 
 class contenedorProductos{
     constructor(tableName){
-        this.table = tableName,
-        this.knex = require("knex")(db)
-        this.createTable()
+        this.table = tableName
+        this.knex = require('knex')(db)
     }
     
     async createTable(){
