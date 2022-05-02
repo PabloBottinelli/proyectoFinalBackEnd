@@ -1,18 +1,18 @@
-const { db } = require('../db/database.js')
+const { dbMsgs } = require('../db/dbsqlite3.js')
 
-class contenedorProductos{
+class contenedorMsgs{
     constructor(tableName){
         this.table = tableName
-        this.knex = require('knex')(db)
+        this.knex = require('knex')(dbMsgs)
         this.createTable()
     }
     
     async createTable(){
         await this.knex.schema.createTableIfNotExists(this.table, (table) => {
-            table.increments('id');
-            table.string('title');
-            table.float('price');
-            table.string('thumbnail');
+            table.increments('id')
+            table.string('username')
+            table.text('content')
+            table.date('fyh')
         })
     }
 
@@ -62,4 +62,4 @@ class contenedorProductos{
         }
     }
 }
-module.exports = contenedorProductos
+module.exports = contenedorMsgs

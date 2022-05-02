@@ -1,15 +1,26 @@
 const express = require('express')
+const fs = require('fs')
 const app = express()
+const server = require('http').Server(app)
+const io = require('socket.io')(server)
 const { Router } = express
 const adm = require('./middleware/middleware.js')
+const { engine } = require ('express-handlebars')
+
+app.engine('handlebars', engine())
+app.set('view engine', 'hbs')
+app.set("views", "./views")
 
 const contenedorProductos = require('./contenedorProductos.js')
 const prods = [{"title": "Camara","price": 5000,"thumbnail": "https://cdn3.iconfinder.com/data/icons/education-and-school-8/48/Camera-128.png","id": 1,"timestamp": "19/04/2022, 10:30:59 PM","description": "Camara profesional","code": 100211,"stock": 100},{"title": "PC","price": 6500,"thumbnail": "https://cdn3.iconfinder.com/data/icons/education-and-school-8/48/Computer-128.png","id": 2,"timestamp": "19/04/2022, 10:04:57 PM","description": "PC Gamer","code": 1002143,"stock": 100},{"title": "Lampara","price": 1000,"thumbnail": "https://cdn3.iconfinder.com/data/icons/education-and-school-8/48/Light-128.png","id": 3,"timestamp": "19/04/2022, 10:04:57 PM","description": "Lampara de estudio","code": 10143404,"stock": 100}]
-var contenidoProductos = new contenedorProductos('articulos')
+var contenidoProductos = new contenedorProductos('productos')
 
 const contenedorCarritos = require('./contenedorCarritos.js')
 const carritos = [{"id": 1,"timestamp": "19/04/2022, 10:05:58 PM","products": []}]
 var contenidoCarritos = new contenedorCarritos(carritos)
+
+const contenedorMsgs = require('./contenedorChat.js')
+var contenidoMsgs = new contenedorMsgs('chat')
 
 const routerProductos = Router()
 const routerCarrito = Router()
@@ -74,9 +85,25 @@ app.get('*', function (req, res) {
   res.json({ error : -2, descripcion: `ruta ${req.path} - método ${req.method} no implementados`})
 })
 
+// Chat con Websockets
+
+io.on('connection', async socket => {
+
+  console.log('Nuevo cliente conectado')
+
+  socket.emit('messages', await contenidoMsgs.getAll())
+
+  socket.on('message' , async msg => {
+    msg.fyh = new Date().toLocaleString()
+    await contenidoMsgs.save(msg)
+    io.sockets.emit('messages', await contenidoMsgs.getAll())
+  })
+})
+
+
 const PORT = process.env.PORT || 8080;
 
-const srv = app.listen(PORT, () => { 
+const srv = server.listen(PORT, () => { 
     console.log(`Servidor Http escuchando en el puerto ${srv.address().port}`);
 })
 srv.on('error', error => console.log(`Error en servidor ${error}`))
