@@ -1,4 +1,4 @@
-const { dbMsgs } = require('../db/dbsqlite3.js')
+const { dbMsgs } = require('../../db/dbsqlite3.js')
 
 class contenedorMsgs{
     constructor(tableName){
