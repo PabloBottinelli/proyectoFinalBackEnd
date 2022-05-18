@@ -1,12 +1,15 @@
 const express = require('express')
 const app = express()
-const server = require('http').Server(app)
-const io = require('socket.io')(server)
+const { Server: HttpServer } = require('http')
+const { Server: IOServer } = require('socket.io')
+const server = new HttpServer(app)
+const io = new IOServer(server)
 const { Router } = express
 const adm = require('./middleware/middleware.js')
 const { engine } = require ('express-handlebars')
 const { ENV: { PORT } } = require('../config');
-const faker = require('faker')
+const { faker } = require('@faker-js/faker')
+const { normalize, schema } = require('normalizr')
 
 app.engine('handlebars', engine())
 app.set('view engine', 'hbs')
@@ -18,12 +21,13 @@ const contenidoProductos = new ProductsDao()
 const { CartsDao } = require('./daos/index')
 const contenidoCarritos = new CartsDao()
 
-const contenedorMsgs = require('./contenedores/contenedorChat.js')
-var contenidoMsgs = new contenedorMsgs('chat')
+const ContenedorArchivo = require('./contenedores/filesContainer.js')
+const contenidoMsjs = new ContenedorArchivo('./db/chat.txt')
 
 const routerProductos = Router()
 const routerCarrito = Router()
 const routerProductosTest = Router()
+const routerChat = Router()
 
 app.use(express.static('public'))
 app.use(express.json())
@@ -31,20 +35,27 @@ app.use(express.urlencoded( {extended: true} ))
 app.use('/api/productos-test', routerProductosTest)
 app.use('/api/productos', routerProductos)
 app.use('/api/carrito', routerCarrito)
+app.use('/api/chat', routerChat)
 
 // Rutas Productos
+let id = 1
+function getId(){
+  return id++
+}
+
 routerProductosTest.get('/', async (req, res) => {
-  let arrayPtos = [];
+  let productos = []
     
   for (let index = 0; index < 5; index++) {
-    arrayPtos.push({
-      titulo: faker.commerce.productName(),
-      precio: faker.commerce.price(),
-      thumbail: faker.image.image()
+    productos.push({
+      id: getId(),
+      title: faker.commerce.productName(),
+      price: faker.commerce.price(),
+      thumbnail: faker.image.image()
     })
   }
-
-  res.send(arrayPtos)
+ 
+  res.json(productos)
 })
 
 routerProductos.get('/:id?', async (req, res) => {
@@ -93,8 +104,25 @@ routerCarrito.delete('/:id/productos/:id_prod', async (req, res) => {
   contenidoProductos.getById(req.params.id_prod).then(resp => resp.error ? res.json(resp) : contenidoCarritos.deleteProduct(req.params.id, resp).then(resp => res.json(resp)))
 })
 
-app.get('*', function (req, res) {
+app.get('*', async (req, res) => {
   res.json({ error : -2, descripcion: `ruta ${req.path} - método ${req.method} no implementados`})
+})
+
+// Rutas Chat
+
+const authorNormalizerSchema = new schema.Entity('author',{},{ idAttribute: 'mail' })
+const textNormalizerSchema = new schema.Entity('text',{author: authorNormalizerSchema}, {idAttribute: 'id'} )
+const messagesNormalizerSchema = [textNormalizerSchema]
+
+routerChat.get('/', async (req, res) => {
+  let msjs= await contenidoMsjs.getAll()
+  console.log(msjs)
+  res.json(normalize(msjs, messagesNormalizerSchema, {idAttribute: 'email'}))
+})
+
+routerChat.post('/', async (req, res) => {
+  console.log('hola?')
+  contenidoMsjs.save(req.body).then(resp => res.json(resp))
 })
 
 // Chat con Websockets
@@ -102,17 +130,14 @@ app.get('*', function (req, res) {
 io.on('connection', async socket => {
 
   console.log('Nuevo cliente conectado')
-
-  socket.emit('messages', await contenidoMsgs.getAll())
-
-  socket.on('message' , async msg => {
-    msg.fyh = new Date().toLocaleString()
-    await contenidoMsgs.save(msg)
-    io.sockets.emit('messages', await contenidoMsgs.getAll())
+  
+  socket.on('nuevoMensaje', () => {
+    console.log('evento')
+    io.sockets.emit('updateMsj')
   })
 })
 
 const srv = server.listen(PORT, () => { 
-    console.log(`Servidor Http escuchando en el puerto ${srv.address().port}`);
+  console.log(`Servidor Http escuchando en el puerto ${srv.address().port}`);
 })
 srv.on('error', error => console.log(`Error en servidor ${error}`))

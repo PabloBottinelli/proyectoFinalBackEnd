@@ -33,16 +33,32 @@
         <div id="product-list" style="margin-bottom: 50px;"></div>
     </section> -->
 
+    <div style="width: 70%; margin: auto; border: 1px solid rgb(228, 228, 228); border-radius: 40px; text-align: center;">
+        <h2 style="color:rgb(33, 219, 67);">Listado de Productos Fakes</h2>
+        <div id="productos_fake"></div>
+        <button id='generar' type="button" style="font-size: 20px; background-color:rgb(33, 219, 67); border-radius:10px; padding: 5px; color: white; border: none; margin-top: 20px; cursor: pointer;">Generar</button>
+    </div>
+
     <section style="width: 70%; margin: auto; border: 1px solid rgb(228, 228, 228); border-radius: 40px; text-align: center;">
         <h2>Chat</h2>
-        <form id="chat">
-            <label for="username" style="font-size: 20px; color:rgb(219, 33, 108); margin-right: 20px;"><b>Email</b></label>
-            <input id="mail" type="email" name="username" style="width: 200px; border-radius: 10px; padding: 5px; border: 1px solid rgb(173, 173, 173);" required>
+        <label for="Mail" style="font-size: 20px; color:rgb(219, 33, 108); margin-right: 20px;">Mail</label>
+        <input name="Mail" type="text" id="mail" style="width: 200px; border-radius: 10px; padding: 5px; border: 1px solid rgb(173, 173, 173);">
+        <label for="Nombre" style="font-size: 20px; color:rgb(219, 33, 108); margin-right: 20px;">Nombre</label>
+        <input name="Nombre" type="text" id="nombre" style="width: 200px; border-radius: 10px; padding: 5px; border: 1px solid rgb(173, 173, 173);">
+        <label for="Apellido" style="font-size: 20px; color:rgb(219, 33, 108); margin-right: 20px;">Apellido</label>
+        <input name="Apellido" type="text" id="apellido" style="width: 200px; border-radius: 10px; padding: 5px; border: 1px solid rgb(173, 173, 173);">
+        <label for="Edad" style="font-size: 20px; color:rgb(219, 33, 108); margin-right: 20px;">Edad</label>
+        <input name="Edad" type="text" id="edad" style="width: 200px; border-radius: 10px; padding: 5px; border: 1px solid rgb(173, 173, 173);">
+        <label for="Alias" style="font-size: 20px; color:rgb(219, 33, 108); margin-right: 20px;">Alias</label>
+        <input name="Alias" type="text" id="alias" style="width: 200px; border-radius: 10px; padding: 5px; border: 1px solid rgb(173, 173, 173);">
+        <label for="Avatar" style="font-size: 20px; color:rgb(219, 33, 108); margin-right: 20px;">Avatar</label>
+        <input name="Avatar" type="text" id="avatar" style="width: 200px; border-radius: 10px; padding: 5px; border: 1px solid rgb(173, 173, 173);">
 
+        <form id="chat">
             <label for="message" style="font-size: 20px; color:rgb(219, 33, 108); margin-right: 20px;"><b>Message</b></label>
-            <input id="contenido" type="text" name="message" style="width: 200px; border-radius: 10px; padding: 5px; border: 1px solid rgb(173, 173, 173);" required>
+            <input id="mensaje" type="text" name="message" style="width: 200px; border-radius: 10px; padding: 5px; border: 1px solid rgb(173, 173, 173);" required>
             
-            <button class="btn btn-success mt-3 mb-5" style="font-size: 20px; background-color:rgb(33, 219, 67); border-radius:10px; padding: 5px; color: white; border: none; margin-top: 20px; cursor: pointer;">Enviar</button>
+            <button type="submit" id="enviar" class="btn btn-success mt-3 mb-5" style="font-size: 20px; background-color:rgb(33, 219, 67); border-radius:10px; padding: 5px; color: white; border: none; margin-top: 20px; cursor: pointer;">Enviar</button>
         </form>
 
         <div id="mensajes"></div>
