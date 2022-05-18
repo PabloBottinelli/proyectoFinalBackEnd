@@ -6,6 +6,7 @@ const { Router } = express
 const adm = require('./middleware/middleware.js')
 const { engine } = require ('express-handlebars')
 const { ENV: { PORT } } = require('../config');
+const faker = require('faker')
 
 app.engine('handlebars', engine())
 app.set('view engine', 'hbs')
@@ -22,14 +23,29 @@ var contenidoMsgs = new contenedorMsgs('chat')
 
 const routerProductos = Router()
 const routerCarrito = Router()
+const routerProductosTest = Router()
 
 app.use(express.static('public'))
 app.use(express.json())
 app.use(express.urlencoded( {extended: true} ))
+app.use('/api/productos-test', routerProductosTest)
 app.use('/api/productos', routerProductos)
 app.use('/api/carrito', routerCarrito)
 
 // Rutas Productos
+routerProductosTest.get('/', async (req, res) => {
+  let arrayPtos = [];
+    
+  for (let index = 0; index < 5; index++) {
+    arrayPtos.push({
+      titulo: faker.commerce.productName(),
+      precio: faker.commerce.price(),
+      thumbail: faker.image.image()
+    })
+  }
+
+  res.send(arrayPtos)
+})
 
 routerProductos.get('/:id?', async (req, res) => {
   if(req.params.id){
