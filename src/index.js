@@ -19,21 +19,26 @@ app.use(express.urlencoded( {extended: true} ))
 const ContenedorArchivo = require('./contenedores/filesContainer.js')
 const contenidoMsjs = new ContenedorArchivo('./db/chat.txt')
 
-const authorNormalizerSchema = new schema.Entity('author',{},{ idAttribute: 'mail' })
-const textNormalizerSchema = new schema.Entity('text',{author: authorNormalizerSchema}, {idAttribute: 'id'} )
-const messagesNormalizerSchema = [textNormalizerSchema]
 
-async function normalizarMsgs(msgs){
+
+async function normalizarMsgs(){
+  const msgs = await contenidoMsjs.getAll()
+
+  const authorNormalizerSchema = new schema.Entity('author',{},{ idAttribute: 'mail' })
+  const textNormalizerSchema = new schema.Entity('text',{author: authorNormalizerSchema}, {idAttribute: 'id'} )
+  const messagesNormalizerSchema = [textNormalizerSchema]
+
   const normalizado = normalize(msgs, messagesNormalizerSchema, {idAttribute: 'email'}).entities.text
-  return normalizado
+
+  return JSON.stringify(normalizado)
 } 
 
 io.on('connection', async socket => {
   console.log('Nuevo cliente conectado')
 
-  contenidoMsjs.getAll().then(resp => normalizarMsgs(resp).then(resp => socket.emit('messages', resp)))
-
   // normalizarMsgs().then(resp => socket.emit('messages', resp))
+
+  contenidoMsjs.getAll().then(resp => socket.emit('messages', resp))
 
   socket.on('message' , msg => {
     contenidoMsjs.save(msg).then(contenidoMsjs.getAll().then(resp => io.sockets.emit('messages', resp)))

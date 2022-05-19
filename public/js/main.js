@@ -29,11 +29,6 @@ const mandarMensaje = document.getElementById("chat")
 mandarMensaje.addEventListener("submit", e => {
   e.preventDefault()
 
-  const mensaje = {
-    username: document.getElementById("mail").value,
-    content: document.getElementById("contenido").value
-  }
-
   const mail = document.getElementById('mail')
   const nombre = document.getElementById('nombre')
   const apellido = document.getElementById('apellido')
@@ -60,8 +55,6 @@ mandarMensaje.addEventListener("submit", e => {
 })
 
 socket.on('messages', msgs => {
-  console.log(msgs)
-  console.log('hola')
   let htmlContent = msgs.map( msg => `<p><b style="color:rgb(219, 33, 108); font-size: 20px;">${msg.author.mail}</b> <span style="color:rgb(219, 33, 108); font-size: 18px;">${msg.fyh}</span>: <i style="color:black; font-size: 20px;">${msg.mensaje}</i></p>`).join('')
   document.getElementById('mensajes').innerHTML = htmlContent
 })
