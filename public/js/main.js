@@ -27,7 +27,7 @@ socket.on("products", async (products) => {
 
 const mandarMensaje = document.getElementById("chat")
 mandarMensaje.addEventListener("submit", e => {
-  e.preventDefault()
+  // e.preventDefault()
 
   const mail = document.getElementById('mail')
   const nombre = document.getElementById('nombre')
@@ -56,5 +56,7 @@ mandarMensaje.addEventListener("submit", e => {
 
 socket.on('messages', msgs => {
   let htmlContent = msgs.map( msg => `<p><b style="color:rgb(219, 33, 108); font-size: 20px;">${msg.author.mail}</b> <span style="color:rgb(219, 33, 108); font-size: 18px;">${msg.fyh}</span>: <i style="color:black; font-size: 20px;">${msg.mensaje}</i></p>`).join('')
+  let compresion = `<h2>Porcentaje de compresión: ${msgs.porcentaje} %</h2>`
+  document.getElementById('porcentaje').innerHTML = compresion
   document.getElementById('mensajes').innerHTML = htmlContent
 })
