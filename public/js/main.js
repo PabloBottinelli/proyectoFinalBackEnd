@@ -1,53 +1,39 @@
-const socket = io.connect();
+let socket = io.connect()
 
-// Productos con faker
-const generarProductosFake = document.getElementById("generar")
-
-generarProductosFake.addEventListener('click', e =>{
+const agregarProducto = document.getElementById("formulario-productos")
+agregarProducto.addEventListener("submit", e => {
   e.preventDefault()
-  listarProductosFake(true)
+
+  const producto = {
+    title: document.getElementById("title").value,
+    price: document.getElementById("price").value,
+    thumbnail: document.getElementById("thumbnail").value,
+  }
+
+  socket.emit('nuevo-producto', producto)
+
+  agregarProducto.reset()
 })
 
-async function listarProductosFake(mostrar){
-  const plantilla = await plantillaProductoFake()
-  const productos_fake = await buscarProductosFake()
-  const htmlfake = armarHTMLfake(plantilla, productos_fake, mostrar)
-  document.getElementById('productos_fake').innerHTML = htmlfake
-}
+socket.on("products", async (products) => {
+  let view = await fetch("../views/productos.hbs")
+  let viewText = await view.text()
+  let viewTextCompile = Handlebars.compile(viewText)
 
-function buscarProductosFake(){
-  return fetch('/api/productos-test')
-  .then(prodfake => prodfake.json())
-}
+  let htmlContent = viewTextCompile({ products })
 
-function plantillaProductoFake(){
-  return fetch('/plantillas/productos_fake.hbs')
-  .then(respuesta1 => respuesta1.text())
-}
-
-function armarHTMLfake(plantilla1, productos_fake,mostrar){
-  const render = Handlebars.compile(plantilla1)
-  const html = render({ productos_fake, mostrar })
-  return html
-}
-
-// Chat con Normalizer
-//Denormalize
-const authorNormalizerSchema = new normalizr.schema.Entity('author',{},{ idAttribute: 'mail' })
-const textNormalizerSchema = new normalizr.schema.Entity('text',{author: authorNormalizerSchema}, {idAttribute: 'id'} )
-const messagesNormalizerSchema = [textNormalizerSchema]
-
-listarMensajes()
-
-socket.on('updateMsj', () => {
-  console.log("evento updateMsj llego al cliente")
-  listarMensajes() 
+  document.getElementById("product-list").innerHTML = htmlContent
 })
 
-const enviar = document.getElementById('enviar')
+const mandarMensaje = document.getElementById("chat")
+mandarMensaje.addEventListener("submit", e => {
+  e.preventDefault()
 
-enviar.addEventListener('click', () => {
-  console.log('q pasa')
+  const mensaje = {
+    username: document.getElementById("mail").value,
+    content: document.getElementById("contenido").value
+  }
+
   const mail = document.getElementById('mail')
   const nombre = document.getElementById('nombre')
   const apellido = document.getElementById('apellido')
@@ -55,6 +41,7 @@ enviar.addEventListener('click', () => {
   const alias = document.getElementById('alias')
   const avatar = document.getElementById('avatar')
   const msj = document.getElementById('mensaje')
+
   const data = {
     author:{ 
     mail: mail.value, 
@@ -66,40 +53,15 @@ enviar.addEventListener('click', () => {
     },
     mensaje: msj.value
   }
-  fetch('/api/chat', {
-    headers: {
-      'Content-Type': 'application/json'
-    },
-    method: 'POST',
-    body: JSON.stringify(data)
-  })
-  .then(socket.emit('nuevoMensaje', 'Nuevo mensaje enviado'))
-  .catch(err => console.error(err))
+
+  socket.emit('message', data)
+
+  mandarMensaje.reset()
 })
 
-async function listarMensajes() {
-  const plantillaMsj = await buscarPlantillaMensaje()
-  const mensajesNormalizado = await buscarMensajes()
-  console.log(JSON.stringify(mensajesNormalizado))
-  const mensajes = normalizr.denormalize(mensajesNormalizado.result, messagesNormalizerSchema, mensajesNormalizado.entities)
-  console.log(JSON.stringify(mensajes))
-  let rate = JSON.stringify(mensajesNormalizado).length/JSON.stringify(mensajes).length;
-  const htmlMsj = armarHTMLmsj(plantillaMsj, mensajes, rate.toFixed(2)*100)
-  document.getElementById('mensajes').innerHTML = htmlMsj
-}
-
-function buscarMensajes() {
-  return fetch('/api/chat')
-  .then(msjs => msjs.json())
-}
-
-function buscarPlantillaMensaje() {
-  return fetch('/plantillas/chat.hbs')
-  .then(resp => resp.text())
-}
-
-function armarHTMLmsj(plantillaMsj, mensajes, rate) {
-  const render = Handlebars.compile(plantillaMsj);
-  const html = render({ mensajes, rate })
-  return html
-}
+socket.on('messages', msgs => {
+  console.log(msgs)
+  console.log('hola')
+  let htmlContent = msgs.map( msg => `<p><b style="color:rgb(219, 33, 108); font-size: 20px;">${msg.author.mail}</b> <span style="color:rgb(219, 33, 108); font-size: 18px;">${msg.fyh}</span>: <i style="color:black; font-size: 20px;">${msg.mensaje}</i></p>`).join('')
+  document.getElementById('mensajes').innerHTML = htmlContent
+})

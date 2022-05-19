@@ -1,3 +1,0 @@
-[{"title": "Camara","price": 5000,"thumbnail": "https://cdn3.iconfinder.com/data/icons/education-and-school-8/48/Camera-128.png","id": 1,"timestamp": "19/04/2022, 10:30:59 PM","description": "Camara profesional","code": 100211,"stock": 100},{"title": "PC","price": 6500,"thumbnail": "https://cdn3.iconfinder.com/data/icons/education-and-school-8/48/Computer-128.png","id": 2,"timestamp": "19/04/2022, 10:04:57 PM","description": "PC Gamer","code": 1002143,"stock": 100},{"title": "Lampara","price": 1000,"thumbnail": "https://cdn3.iconfinder.com/data/icons/education-and-school-8/48/Light-128.png","id": 3,"timestamp": "19/04/2022, 10:04:57 PM","description": "Lampara de estudio","code": 10143404,"stock": 100}]
-
-[{"products": []}]
