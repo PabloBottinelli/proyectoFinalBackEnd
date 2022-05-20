@@ -48,8 +48,15 @@ io.on('connection', async socket => {
   const porcentajeC = (longNorm * 100) / longSinNorm
   let rate = porcentajeC.toFixed(2)
 
-  denorm.porcentaje = rate
-  console.log(denorm.porcentaje)
+  let porcentaje = {
+    rate
+  }
+ 
+  denorm.push(porcentaje)
+  // const prueba = denorm[(denorm.length -1)]
+  // console.log(prueba.rate)
+  // denorm.pop()
+  console.log(denorm)
   socket.emit('messages', denorm)
 
   // contenidoMsjs.getAll().then(resp => socket.emit('messages', resp))
