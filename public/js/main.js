@@ -1,29 +1,62 @@
 let socket = io.connect()
 
-const agregarProducto = document.getElementById("formulario-productos")
-agregarProducto.addEventListener("submit", e => {
+// const agregarProducto = document.getElementById("formulario-productos")
+// agregarProducto.addEventListener("submit", e => {
+//   e.preventDefault()
+
+//   const producto = {
+//     title: document.getElementById("title").value,
+//     price: document.getElementById("price").value,
+//     thumbnail: document.getElementById("thumbnail").value,
+//   }
+
+//   socket.emit('nuevo-producto', producto)
+
+//   agregarProducto.reset()
+// })
+
+// socket.on("products", async (products) => {
+//   let view = await fetch("../views/productos.hbs")
+//   let viewText = await view.text()
+//   let viewTextCompile = Handlebars.compile(viewText)
+
+//   let htmlContent = viewTextCompile({ products })
+
+//   document.getElementById("product-list").innerHTML = htmlContent
+// })
+
+// Productos con faker
+const generarProductosFake = document.getElementById("generar")
+
+generarProductosFake.addEventListener('click', e =>{
   e.preventDefault()
-
-  const producto = {
-    title: document.getElementById("title").value,
-    price: document.getElementById("price").value,
-    thumbnail: document.getElementById("thumbnail").value,
-  }
-
-  socket.emit('nuevo-producto', producto)
-
-  agregarProducto.reset()
+  listarProductosFake(true)
 })
 
-socket.on("products", async (products) => {
-  let view = await fetch("../views/productos.hbs")
-  let viewText = await view.text()
-  let viewTextCompile = Handlebars.compile(viewText)
+async function listarProductosFake(mostrar){
+  const plantilla = await plantillaProductoFake()
+  const productos_fake = await buscarProductosFake()
+  const htmlfake = armarHTMLfake(plantilla, productos_fake, mostrar)
+  document.getElementById('productos_fake').innerHTML = htmlfake
+}
 
-  let htmlContent = viewTextCompile({ products })
+function buscarProductosFake(){
+  return fetch('/api/productos-test')
+  .then(prodfake => prodfake.json())
+}
 
-  document.getElementById("product-list").innerHTML = htmlContent
-})
+function plantillaProductoFake(){
+  return fetch('/plantillas/productos_fake.hbs')
+  .then(respuesta1 => respuesta1.text())
+}
+
+function armarHTMLfake(plantilla1, productos_fake,mostrar){
+  const render = Handlebars.compile(plantilla1)
+  const html = render({ productos_fake, mostrar })
+  return html
+}
+
+// Chat con normalizr
 
 const mandarMensaje = document.getElementById("chat")
 mandarMensaje.addEventListener("submit", e => {
@@ -55,10 +88,9 @@ mandarMensaje.addEventListener("submit", e => {
 })
 
 socket.on('messages', msgs => {
-  // let rate = msgs[(msgs.length -1)]
-  const mensajes = msgs.pop()
-  let htmlContent = mensajes.map( msg => `<p><b style="color:rgb(219, 33, 108); font-size: 20px;">${msg.author.mail}</b> <span style="color:rgb(219, 33, 108); font-size: 18px;">${msg.fyh}</span>: <i style="color:black; font-size: 20px;">${msg.mensaje}</i></p>`).join('')
-  // let compresion = `<h2>Porcentaje de compresión: ${rate.rate} %</h2>`
-  // document.getElementById('porcentaje').innerHTML = compresion
+  const rate = msgs.pop()
+  let htmlContent = msgs.map( msg => `<p><b style="color:rgb(219, 33, 108); font-size: 20px;">${msg.author?.mail}</b> <span style="color:rgb(219, 33, 108); font-size: 18px;">${msg.fyh}</span>: <i style="color:black; font-size: 20px;">${msg.mensaje}</i></p>`).join('')
+  let compresion = `<h2>Porcentaje de compresión: ${rate.rate} %</h2>`
+  document.getElementById('porcentaje').innerHTML = compresion
   document.getElementById('mensajes').innerHTML = htmlContent
 })

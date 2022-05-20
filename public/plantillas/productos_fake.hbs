@@ -1,0 +1,14 @@
+{{#if mostrar}} 
+<div>
+    <table style="background-color: blueviolet; width: 70%; margin-bottom: 50px; margin: auto; border-radius: 30px; padding: 30px; text-align: left;">
+        <tr style="text-align: left;">
+            <th style="color:white; font-size: 20px">Titulo</th>
+            <th style="color:white; font-size: 20px">Precio</th>
+            <th style="color:white; font-size: 20px">Foto</th>
+        </tr>
+        {{#each productos_fake}}
+            <tr> <td style="color:white">{{this.title}}</td> <td style="color:white">${{this.price}}</td> <td style="color:white"><img width="50" src={{this.thumbnail}} alt="not found"></td> </tr>
+        {{/each}}
+    </table>
+</div>
+{{/if}}
