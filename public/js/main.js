@@ -94,3 +94,29 @@ socket.on('messages', msgs => {
   document.getElementById('porcentaje').innerHTML = compresion
   document.getElementById('mensajes').innerHTML = htmlContent
 })
+
+// Usuario
+bannerUsuario()
+
+async function bannerUsuario(){
+  const plantillaUser = await buscarPlantillaUsuario()
+  const user = await buscarUsuario()
+  const htmluser = armarHTMLuser(plantillaUser,user)
+  document.getElementById('usuario').innerHTML = htmluser
+}
+
+function buscarUsuario() {
+  return fetch('/login/user')
+  .then(msjs => msjs.json())
+}
+
+function buscarPlantillaUsuario() {
+  return fetch('/plantillas/usuario.hbs')
+  .then(respuesta3 => respuesta3.text())
+}
+
+function armarHTMLuser(plantillaUser,user) {
+  const render = Handlebars.compile(plantillaUser,user);
+  const html = render({ user })
+  return html
+}

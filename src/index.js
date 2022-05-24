@@ -1,4 +1,5 @@
 const express = require('express')
+const session = require("express-session")
 const app = express()
 const server = require('http').Server(app)
 const io = require('socket.io')(server)
@@ -9,9 +10,29 @@ const adm = require('./middleware/middleware.js')
 const { ENV: { PORT } } = require('../config');
 const { faker } = require('@faker-js/faker')
 
+const MongoStore = require("connect-mongo")
+const advancedOptions = { useNewUrlParser: true, useUnifiedTopology: true }
+
 app.engine('handlebars', engine())
 app.set('view engine', 'hbs')
 app.set("views", "./views")
+
+let sessionMiddleware = session({
+  store: MongoStore.create({
+    mongoUrl: process.env.MONGOATLAS,
+    mongoOptions: advancedOptions,
+  }),
+  secret: "shhh",
+  resave: false,
+  saveUninitialized: false,
+  cookie: {
+    maxAge: 60000,
+    expires: 60000
+  }
+})
+app.use(sessionMiddleware)
+
+function sessionHandler(req, res, next) { sessionMiddleware(req, res, next) }
 
 const { ProductsDao } = require('./daos/index')
 const contenidoProductos = new ProductsDao()
@@ -25,6 +46,8 @@ const contenidoMsjs = new ContenedorArchivo('./db/chat.txt')
 const routerProductos = Router()
 const routerCarrito = Router()
 const routerProductosTest = Router()
+const routerLogin = Router()
+const routerRegister = Router()
 
 app.use(express.static('public'))
 app.use(express.json())
@@ -32,6 +55,59 @@ app.use(express.urlencoded( {extended: true} ))
 app.use('/api/productos-test', routerProductosTest)
 app.use('/api/productos', routerProductos)
 app.use('/api/carrito', routerCarrito)
+app.use('/login', sessionHandler, routerLogin)
+app.use('/register', sessionHandler, routerRegister)
+
+// Register
+const usuarios = [{nombre: 'pablo'}]
+
+// Login
+routerLogin.get('/user', (req, res) => {
+  const usuario = usuarios.find(usuario => usuario.nombre == req.session.nombre)
+  if (!usuario) {
+    res.json("No se encontro usuario logueado")
+  }
+  res.json({nombre: usuario.nombre})
+})
+
+routerLogin.get('/', (req, res) => {
+  res.sendFile('login.html', { root: './public/login' })
+})
+
+routerLogin.post('/', (req, res) => {
+  const { nombre } = req.body
+  const usuario = usuarios.find(usuario => usuario.nombre == nombre)
+  if (!usuario) {
+    return res.redirect('login-error')
+  }
+  req.session.nombre = nombre
+  res.redirect("/")
+})
+
+// Ruta al HOME PAGE
+app.get('/', sessionHandler,(req, res) => {
+  if(req.session.nombre){
+    res.sendFile('index.html', { root: './public' })
+  }else{
+    res.redirect('/login')
+  }
+})
+
+// LOGOUT
+app.get('/logout-despedida', (req, res) => {
+  res.sendFile('logout.html', { root: './public/login' })
+})
+
+app.get('/logout', (req, res) => {
+  req.session.destroy(err => {
+    res.redirect('/login')
+  })
+})
+
+//Login Error
+app.get('/login-error', (req, res) => {
+  res.sendFile('login-error.html', { root: './public/login' })
+})
 
 // Rutas Productos
 let id = 1
