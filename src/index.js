@@ -25,9 +25,9 @@ let sessionMiddleware = session({
   secret: "shhh",
   resave: false,
   saveUninitialized: false,
+  rolling: true,
   cookie: {
-    maxAge: 60000,
-    expires: 60000
+    maxAge: 60000
   }
 })
 app.use(sessionMiddleware)
@@ -58,7 +58,6 @@ app.use('/api/carrito', routerCarrito)
 app.use('/login', sessionHandler, routerLogin)
 app.use('/register', sessionHandler, routerRegister)
 
-// Register
 const usuarios = [{nombre: 'pablo'}]
 
 // Login
@@ -84,16 +83,16 @@ routerLogin.post('/', (req, res) => {
   res.redirect("/")
 })
 
-// Ruta al HOME PAGE
+// Home
 app.get('/', sessionHandler,(req, res) => {
   if(req.session.nombre){
-    res.sendFile('index.html', { root: './public' })
+    res.sendFile('index.html', { root: './public/home' })
   }else{
     res.redirect('/login')
   }
 })
 
-// LOGOUT
+// Logout
 app.get('/logout-despedida', (req, res) => {
   res.sendFile('logout.html', { root: './public/login' })
 })
@@ -104,7 +103,6 @@ app.get('/logout', (req, res) => {
   })
 })
 
-//Login Error
 app.get('/login-error', (req, res) => {
   res.sendFile('login-error.html', { root: './public/login' })
 })
