@@ -25,7 +25,8 @@ let socket = io.connect()
 //   document.getElementById("product-list").innerHTML = htmlContent
 // })
 
-// Productos con faker
+/* ------------------ Productos con Faker -------------------- */
+
 const generarProductosFake = document.getElementById("generar")
 
 generarProductosFake.addEventListener('click', e =>{
@@ -56,7 +57,7 @@ function armarHTMLfake(plantilla1, productos_fake,mostrar){
   return html
 }
 
-// Chat con normalizr
+/* ------------------ Chat con Normalizr -------------------- */
 
 const mandarMensaje = document.getElementById("chat")
 mandarMensaje.addEventListener("submit", e => {
@@ -95,7 +96,7 @@ socket.on('messages', msgs => {
   document.getElementById('mensajes').innerHTML = htmlContent
 })
 
-// Usuario
+/* ------------------ Login -------------------- */
 bannerUsuario()
 
 async function bannerUsuario(){

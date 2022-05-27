@@ -1,3 +1,5 @@
+/* ------------------ Logout -------------------- */
+
 bannerUsuario() 
 
 async function bannerUsuario() {
