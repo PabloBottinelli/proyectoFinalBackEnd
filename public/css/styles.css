@@ -1,0 +1,219 @@
+* {
+    margin: 0;
+    padding: 0;
+    font-family: 'Roboto', sans-serif; 
+}
+
+/* ------------------ CSS Login.html -------------------- */
+
+.ctn-login{
+    margin: auto;
+    width: 80%;
+    margin-top: 150px;
+}
+.log{
+    border: 1px solid rgb(179, 179, 179);
+    border-radius: 20px;
+    width: 400px;
+    height: 300px;
+    margin: auto;
+    padding: 50px;
+    text-align: center;
+}
+.login-h2{
+    color: rgb(33, 219, 67);
+    font-size: 50px;
+    margin-bottom: 50px;
+}
+.place{
+    width: 250px; 
+    border-radius: 50px; 
+    padding: 15px; 
+    border: 1px solid rgb(173, 173, 173);
+    font-size: 20px;
+    margin-bottom: 30px;
+}
+.button{
+    width: 60%;
+    padding: 10px;
+    font-size: 20px; 
+    background-color:rgb(33, 219, 67); 
+    border-radius:10px; 
+    color: white; 
+    border: none; 
+    margin-top: 20px; 
+    cursor: pointer;
+}
+
+#usuario{
+    margin-top: 50px;
+}
+
+.user-h3{
+    color:rgb(33, 219, 67); 
+    font-size: 30px;
+    margin: auto; 
+    text-align: center; 
+    margin-bottom: 40px;
+}
+
+.user-h3 button{
+    background-color: rgb(208, 50, 50);
+    color: white;
+    font-size: 20px;
+    border-radius: 10px;
+    border: none;
+    padding: 5px;
+    cursor: pointer;
+    width: 150px;
+}
+
+/* ------------------ CSS Logout.html -------------------- */
+#user{
+    width: 100%;
+    height: 1000px;
+    text-align: center;
+    background-color:rgb(33, 219, 67);
+}
+#user h2{
+    color:white; 
+    margin: auto; 
+    text-align: center; 
+    margin-bottom: 40px;
+    padding-top: 200px;
+    font-size: 50px;
+}
+
+/* ------------------ CSS Login-error.html -------------------- */
+.ctn-error-login{
+    background-color: rgb(208, 50, 50);
+    height: 1000px;
+    width: 100%;
+}
+.error-login{
+    text-align: center;
+} 
+.error-login h1{
+    color: white;
+    font-size: 50px;
+    padding-top: 200px;
+    padding-bottom: 40px;
+}
+.error-login button{
+    width: 200px;
+    padding: 10px;
+    font-size: 20px; 
+    background-color:rgb(33, 219, 67); 
+    border-radius:10px; 
+    color: white; 
+    border: none; 
+    margin-top: 20px; 
+    cursor: pointer;
+}
+
+/* ------------------ CSS Tabla fake -------------------- */
+.fake-table-ctn{
+    width: 60%; 
+    margin: auto; 
+    border: 1px solid rgb(179, 179, 179);
+    border-radius: 40px; 
+    text-align: center;
+    padding: 50px;
+    margin-bottom: 50px;
+}
+
+.fake-table-ctn h2{
+    color: rgb(33, 219, 67);
+    font-size: 30px;
+    margin-bottom: 50px;
+}
+
+.fake-table-ctn button{
+    width: 200px;
+    padding: 10px;
+    font-size: 20px; 
+    background-color:rgb(33, 219, 67); 
+    border-radius:10px; 
+    color: white; 
+    border: none; 
+    margin-top: 20px; 
+    cursor: pointer;
+}
+
+.fake-table{
+    background-color: rgb(219, 33, 108); 
+    width: 70%; 
+    margin-bottom: 50px; 
+    margin: auto; 
+    border-radius: 30px; 
+    padding: 30px; 
+    text-align: left;
+    margin-bottom: 50px;
+}
+
+.fake-table th{
+    color: white;
+    font-size: 20px;
+}
+
+.fake-table td{
+    color: white;
+}
+
+/* ------------------ CSS Chat -------------------- */
+.chat-ctn{
+    width: 60%; 
+    margin: auto; 
+    border: 1px solid rgb(179, 179, 179);
+    border-radius: 40px; 
+    text-align: center;
+    padding: 50px;
+    margin-bottom: 50px;
+}
+
+.chat-ctn h2{
+    color: rgb(33, 219, 67);
+    font-size: 30px;
+    margin-bottom: 50px;
+}
+
+.chat-ctn label{
+    color: rgb(219, 33, 108);
+    display: inline-block;
+    font-size: 20px;
+    width: 100px;
+}
+
+.chat-ctn form div{
+    display: block;
+    text-align: left;
+    margin: auto;
+    width: 500px;
+    margin-bottom: 5px;
+}
+
+.chat-ctn input{
+    padding: 5px;
+    border: 1px solid rgb(161, 161, 161);
+    border-radius: 10px;
+    width: 300px;
+}
+
+.chat-ctn button{
+    width: 120px;
+    padding: 5px;
+    font-size: 20px; 
+    background-color:rgb(33, 219, 67); 
+    border-radius:10px; 
+    color: white; 
+    border: none; 
+    margin-top: 20px; 
+    cursor: pointer;
+    margin-bottom: 50px;
+}
+
+#mensajes{
+    text-align: left;
+    margin: auto;
+    width: 50%;
+}
