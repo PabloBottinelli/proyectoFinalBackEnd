@@ -107,7 +107,7 @@ async function bannerUsuario(){
 }
 
 function buscarUsuario() {
-  return fetch('/login/user')
+  return fetch('/api/user')
   .then(msjs => msjs.json())
 }
 
