@@ -1,6 +1,6 @@
-{{#if user}} 
+{{#if user.nombre}} 
     <h3 class="user-h3">
-        Bienvenido <a>{{user}}</a>
+        Bienvenido <a>{{user.nombre}}</a>
         <button onclick="location.href='/logout-despedida'">LOGOUT</button>
     </h3>
 {{else}}  

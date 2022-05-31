@@ -5,8 +5,7 @@ const server = require('http').Server(app)
 const io = require('socket.io')(server)
 const { engine } = require ('express-handlebars')
 const { normalize, schema, denormalize } = require('normalizr')
-const passport = require('passport')
-require('dotenv').config()
+const { ENV: { PORT } } = require('../config');
 
 app.engine('handlebars', engine())
 app.set('view engine', 'hbs')
@@ -16,28 +15,23 @@ app.set("views", "./views")
 
 const MongoStore = require("connect-mongo")
 const advancedOptions = { useNewUrlParser: true, useUnifiedTopology: true }
-const { usuarioModel } = require('./models/user')
 
-app.use(
-  session({
-    store: MongoStore.create({
-      mongoUrl: process.env.MONGOATLAS,
-      mongoOptions: advancedOptions
-    }),
-    secret: 'shhh',
-    resave: false,
-    saveUninitialized: true,  
-    rolling: true,
-    cookie: {
-      maxAge: 60000
-    }
-  })
-)
+let sessionMiddleware = session({
+  store: MongoStore.create({
+    mongoUrl: process.env.MONGOATLAS,
+    mongoOptions: advancedOptions,
+  }),
+  secret: "shhh",
+  resave: false,
+  saveUninitialized: false,
+  rolling: true,
+  cookie: {
+    maxAge: 60000
+  }
+})
+app.use(sessionMiddleware)
 
-app.use(passport.initialize())
-app.use(passport.session())
-
-/* ------------------ Contenedores y Rutas -------------------- */
+function sessionHandler(req, res, next) { sessionMiddleware(req, res, next) }
 
 const ContenedorArchivo = require('./contenedores/filesContainer.js')
 const contenidoMsjs = new ContenedorArchivo('./db/chat.txt')
@@ -45,7 +39,7 @@ const contenidoMsjs = new ContenedorArchivo('./db/chat.txt')
 const { routerProductosTest } = require("./router/productos")
 const { routerProductos } = require("./router/productos")
 const { routerCarrito } = require("./router/carrito")
-const { routerWeb } = require("./router/web")
+const { routerLogin } = require("./router/login")
 
 app.use(express.static('public'))
 app.use(express.json())
@@ -53,11 +47,33 @@ app.use(express.urlencoded( {extended: true} ))
 app.use('/api/productos-test', routerProductosTest)
 app.use('/api/productos', routerProductos)
 app.use('/api/carrito', routerCarrito)
-app.use('/', routerWeb)
+app.use('/login', sessionHandler, routerLogin)
 
-passport.use(usuarioModel.createStrategy())
-passport.serializeUser(usuarioModel.serializeUser())
-passport.deserializeUser(usuarioModel.deserializeUser())
+/* ------------------ Home -------------------- */
+
+app.get('/', sessionHandler,(req, res) => {
+  if(req.session.nombre){
+    res.sendFile('index.html', { root: './public/home' })
+  }else{
+    res.redirect('/login')
+  }
+})
+
+/* ------------------ Logout -------------------- */
+
+app.get('/logout-despedida', (req, res) => {
+  res.sendFile('logout.html', { root: './public/login' })
+})
+
+app.get('/logout', (req, res) => {
+  req.session.destroy(err => {
+    res.redirect('/login')
+  })
+})
+
+app.get('/login-error', (req, res) => {
+  res.sendFile('login-error.html', { root: './public/login' })
+})
 
 /* ------------------ Para rutas inexistentes -------------------- */
 
@@ -108,7 +124,7 @@ io.on('connection', async socket => {
 
 /* ------------------ Server -------------------- */
 
-const srv = server.listen(process.env.PORT, () => { 
+const srv = server.listen(PORT, () => { 
   console.log(`Servidor Http con Websockets escuchando en el puerto ${srv.address().port}`);
 })
 srv.on('error', error => console.log(`Error en servidor ${error}`))
