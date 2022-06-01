@@ -12,10 +12,12 @@
   <div class="ctn-login">
     <div class="log">
       <h2 class="login-h2">Login</h2>
-      <form action="/login" method="post" role="form" autocomplete="off" class="login-form">
-        <input class="place" id="nombre" name='nombre' placeholder="Nombre" type="text" required>
+      <form action="/login" method="post" autocomplete="off" class="login-form">
+        <input class="place" type="text" id="username" name="username" placeholder="Mail" required>
+        <input class="place" type="password" id="password" name="password" autocomplete="off" placeholder="Contraseña" required>      
         <input class="button" type="submit" value="Login">  
       </form>
+      <button class="button" onclick="location.href = '/register'">Ir a Register</button>
     </div>
   </div>
 </body>

@@ -13,7 +13,7 @@ function buscarPlantillaUsuario() {
     .then(respuesta3 => respuesta3.text())
 }
 function buscarUsuario() {
-    return fetch('/login/user')
+    return fetch('/api/user')
     .then(msjs => msjs.json())
 }
 function armarHTMLuser(plantillaUser,user) {

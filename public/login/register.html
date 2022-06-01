@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+  <title>Register</title>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <link href="https://fonts.googleapis.com/css2?family=Oswald:wght@200;300;400;500;600;700&family=Shippori+Antique+B1&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="../css/styles.css">
+</head>
+<body>
+  <div class="ctn-login">
+    <div class="log">
+      <h2 class="login-h2">Register</h2>
+      <form action="/register" method="post" autocomplete="off" class="login-form">
+        <input class="place" type="text" id="username" name="username" placeholder="Mail"required>
+        <input class="place" type="password" id="password" name="password" autocomplete="off" placeholder="Password"required>
+        <input class="button" type="submit" value="Register">
+        <button class="button" onclick="location.href = '/login'">Ir a Login</button>
+      </form>
+    </div>
+  </div>
+</body>
+</html>
