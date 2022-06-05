@@ -5,7 +5,7 @@ bannerUsuario()
 async function bannerUsuario() {
     const user = await buscarUsuario()
     const plantillaUser = await buscarPlantillaUsuario()
-    const htmluser = armarHTMLuser(plantillaUser,user)
+    const htmluser = armarHTMLuser(plantillaUser, user)
     document.getElementById('user').innerHTML = htmluser
 }
 function buscarPlantillaUsuario() {

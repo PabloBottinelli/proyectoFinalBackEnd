@@ -1,0 +1,26 @@
+<h1>INFO</h1>
+<div>
+    {{#if this.info.Arg}}
+    <div>
+        Argumentos de entrada: <b>{{this.info.Arg}}</b>
+    </div>
+    {{/if}}
+    <div>
+        Sistema Operativo: <b>{{this.info.SO}}</b>
+    </div>
+    <div>
+        Version de Node: <b>{{this.info.Node}}</b>
+    </div>
+    <div>
+        Memoria Total Reservada (rss): <b>{{this.info.Memoria}}</b> bytes.
+    </div>
+    <div>
+        Path de ejecucion: <b>{{this.info.execPath}}</b>
+    </div>
+    <div>
+        Process ID: <b>{{this.info.PID}}</b>
+    </div>
+    <div>
+        Carpeta del Proyecto: <b>{{this.info.ProjectFolder}}</b>
+    </div>
+</div>

@@ -7,6 +7,8 @@ const { engine } = require ('express-handlebars')
 const { normalize, schema, denormalize } = require('normalizr')
 require('dotenv').config()
 const passport = require('passport')
+const parseArgs = require('minimist')
+const config = require('./config')
 
 app.engine('handlebars', engine())
 app.set('view engine', 'hbs')
@@ -20,10 +22,10 @@ const advancedOptions = { useNewUrlParser: true, useUnifiedTopology: true }
 app.use(
   session({
     store: MongoStore.create({
-      mongoUrl: process.env.MONGOATLAS,
+      mongoUrl: config.credenciales.MONGOATLAS,
       mongoOptions: advancedOptions
     }),
-    secret: 'shhh',
+    secret: config.credenciales.SESSION_SECRET_KEY,
     resave: false,
     saveUninitialized: true,  
     rolling: true,
@@ -45,6 +47,8 @@ const { routerProductosTest } = require("./router/productos")
 const { routerProductos } = require("./router/productos")
 const { routerCarrito } = require("./router/carrito")
 const { routerWeb } = require("./router/web")
+const { routerInfo } = require("./router/info")
+const { routerRandom } = require("./router/random")
 
 app.use(express.static('public'))
 app.use(express.json())
@@ -52,6 +56,8 @@ app.use(express.urlencoded( {extended: true} ))
 app.use('/api/productos-test', routerProductosTest)
 app.use('/api/productos', routerProductos)
 app.use('/api/carrito', routerCarrito)
+app.use('/api/info', routerInfo)
+app.use('/api/randoms', routerRandom)
 app.use('/', routerWeb)
 
 /* ------------------ Para rutas inexistentes -------------------- */
@@ -103,7 +109,19 @@ io.on('connection', async socket => {
 
 /* ------------------ Server -------------------- */
 
-const srv = server.listen(process.env.PORT, () => { 
+const options = {
+  alias:{
+    p: 'puerto'
+  },
+  default:{
+    puerto: 8080
+  }
+}
+
+const commandLineArgs = process.argv.slice(2)
+const { puerto, _ } = parseArgs(commandLineArgs, options)
+
+const srv = server.listen(puerto, () => { 
   console.log(`Servidor Http con Websockets escuchando en el puerto ${srv.address().port}`);
 })
 srv.on('error', error => console.log(`Error en servidor ${error}`))

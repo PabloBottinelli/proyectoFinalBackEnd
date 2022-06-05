@@ -53,6 +53,11 @@ routerWeb.get('/logout', (req, res) => {
   res.redirect('/login')
 })
 
+/* ------------------ Rutas Info -------------------- */
+
+routerWeb.get('/info', (req, res) => {
+  res.sendFile('info.html', { root: './public/info' })
+})
 
 
 module.exports={ routerWeb }

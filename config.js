@@ -17,3 +17,10 @@ module.exports = {
     }
   }
 }
+
+const credenciales = {
+  SESSION_SECRET_KEY: process.env.SESSION_SECRET_KEY || 'keysecret',
+  URL_MONGODB: process.env.URL_MONGODB,
+  MONGOATLAS: process.env.MONGOATLAS
+}
+module.exports = { credenciales }
