@@ -1,5 +1,6 @@
 const { Router } = require('express')
 const routerInfo = new Router()
+const numCPUs = require('os').cpus().length
 
 /* ------------------ Rutas Info -------------------- */
 
@@ -12,7 +13,8 @@ routerInfo.get('/', (req,res)=> {
             Memoria: process.memoryUsage().rss,
             execPath: process.execPath,
             PID: process.pid, 
-            ProjectFolder: process.cwd()
+            ProjectFolder: process.cwd(),
+            NroSrv: numCPUs
         }
     )
 })

@@ -8,7 +8,10 @@ const { normalize, schema, denormalize } = require('normalizr')
 require('dotenv').config()
 const passport = require('passport')
 const parseArgs = require('minimist')
-const config = require('./config')
+const config = require('../config')
+const cluster = require('cluster')
+const numCPUs = require('os').cpus().length
+
 
 app.engine('handlebars', engine())
 app.set('view engine', 'hbs')
@@ -111,17 +114,35 @@ io.on('connection', async socket => {
 
 const options = {
   alias:{
-    p: 'puerto'
+    p: 'puerto',
+    m: 'modo'
   },
   default:{
-    puerto: 8080
+    puerto: 8080,
+    modo: 'FORK'
   }
 }
 
 const commandLineArgs = process.argv.slice(2)
-const { puerto, _ } = parseArgs(commandLineArgs, options)
+const { puerto, modo, _ } = parseArgs(commandLineArgs, options)
+console.log({ puerto, modo, otros: _ })
 
-const srv = server.listen(puerto, () => { 
-  console.log(`Servidor Http con Websockets escuchando en el puerto ${srv.address().port}`);
-})
-srv.on('error', error => console.log(`Error en servidor ${error}`))
+if(modo=='CLUSTER' && cluster.isMaster){  
+  console.log(`Número de procesadores: ${numCPUs}`)
+  console.log(`PID Master ${process.pid}`)
+
+  for(let i=0; i < numCPUs; i++){
+    cluster.fork()
+  }
+
+  cluster.on('exit', worker =>{
+    console.log('Worker', worker.process.pid, 'died', new Date().toLocaleString())
+    cluster.fork()
+  })
+
+}else{
+  const srv = server.listen(puerto, () => { 
+    console.log(`Servidor HTTP escuchando en el puerto ${srv.address().port} - PID WORKER ${process.pid}`);
+  })
+  srv.on('error', error => console.log(`Error en servidor ${error}`))
+}

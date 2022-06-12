@@ -1,6 +1,7 @@
 const admin = require("firebase-admin")
 const { getFirestore } = require("firebase-admin/firestore")
-const { DB_CONFIG } = require("../../config")
+// const { DB_CONFIG } = require("../../config")
+const config = require('../../config')
 
 let count = 0
 class firebaseContainer {
@@ -13,7 +14,7 @@ class firebaseContainer {
   connect() {
     if(!count){ 
       admin.initializeApp({
-        credential: admin.credential.cert(DB_CONFIG.firebase.credential)
+        credential: admin.credential.cert(config.credenciales.DB_CONFIG.firebase.credential)
       })
       console.log("Conexion con la base de datos establecida")
     }

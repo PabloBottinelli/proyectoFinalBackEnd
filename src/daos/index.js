@@ -1,9 +1,10 @@
-const { ENV: { PERS } } = require('../../config')
+// const { ENV: { PERS } } = require('../../config')
+const config = require('../../config')
 
 let ProductsDao
 let CartsDao
 
-switch(PERS) {
+switch(config.credenciales.ENV.PERS) {
   case 'firebase':
     ProductsDao = require('./productos/ProductsFirebaseDao')
     CartsDao = require('./carritos/CartsFirebaseDao')
