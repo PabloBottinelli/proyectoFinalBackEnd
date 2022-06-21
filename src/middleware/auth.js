@@ -4,64 +4,64 @@ const bCrypt = require('bcrypt')
 const User = require('../models/user')
 
 function createHash(password){
-    return bCrypt.hashSync(password, bCrypt.genSaltSync(10), null)
+  return bCrypt.hashSync(password, bCrypt.genSaltSync(10), null)
 }
   
 function isValidPassword(user, password){
-    return bCrypt.compareSync(password, user.password)
+  return bCrypt.compareSync(password, user.password)
 }
 
 passport.use('login', new LocalStrategy(
-    (username, password, done)=>{
-      User.findOne({ username }, (err, user)=>{
-        if(err)
-            return done(err)
-        if(!user) {
-          return done(null, false)
-        }
-        if(!isValidPassword(user, password)) {
-          return done(null, false)
-        }
-        return done(null, user)
-      })
+  (username, password, done)=>{
+    User.findOne({ username }, (err, user)=>{
+      if(err)
+        return done(err)
+      if(!user) {
+        return done(null, false)
+      }
+      if(!isValidPassword(user, password)) {
+        return done(null, false)
+      }
+      return done(null, user)
     })
+  })
 )
    
 passport.use('signup', new LocalStrategy({
-    passReqToCallback: true
-    },
-    (req, username, password, done)=>{
-      User.findOne({ 'username': username }, function (err, user){
+  passReqToCallback: true
+  },
+  (req, username, password, done)=>{
+    User.findOne({ 'username': username }, function (err, user){
    
-        if(err){
+      if(err){
+        return done(err)
+      }
+   
+      if(user){
+        return done(null, false)
+      }
+   
+      const newUser = {
+        username: username,
+        password: createHash(password)
+      }
+
+      User.create(newUser, (err, userWithId)=>{
+        if (err) {
           return done(err)
         }
-   
-        if(user){
-          return done(null, false)
-        }
-   
-        const newUser = {
-          username: username,
-          password: createHash(password)
-        }
-
-        User.create(newUser, (err, userWithId)=>{
-            if (err) {
-              return done(err)
-            }
-            return done(null, userWithId)
-          })
-        })
+        return done(null, userWithId)
+      })
     })
+  })
 )
   
 passport.serializeUser((user, done)=>{
-    done(null, user._id)
+  done(null, user._id)
 })
   
 passport.deserializeUser((id, done)=>{
-    User.findById(id, done)
+  User.findById(id, done)
 })
   
 module.exports = passport

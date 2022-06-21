@@ -1,0 +1,5 @@
+2022-06-17T23:21:48.329Z [[31merror[39m] => 	[31mError en servidor Error: listen EADDRINUSE: address already in use :::8080[39m
+2022-06-17T23:29:13.881Z [[33mwarn[39m] => 	[33m[GET] => /info/34[39m
+2022-06-17T23:29:14.155Z [[33mwarn[39m] => 	[33m[GET] => /favicon.ico[39m
+2022-06-17T23:33:01.736Z [[33mwarn[39m] => 	[33m[GET] => /favicon.ico[39m
+2022-06-17T23:35:02.984Z [[33mwarn[39m] => 	[33m[GET] => /favicon.ico[39m

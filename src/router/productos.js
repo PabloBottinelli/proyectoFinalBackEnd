@@ -3,6 +3,7 @@ const { Router } = require('express')
 const routerProductos = Router()
 routerProductos.use(express.json())
 routerProductos.use(express.urlencoded({ extended: true }))
+const { logger } = require("../../logger")
 const { faker } = require('@faker-js/faker')
 
 const routerProductosTest = Router()
@@ -21,6 +22,7 @@ function getId(){
 }
 
 routerProductosTest.get('/', async (req, res)=>{
+  logger.info(`[${req.method}] => ${req.path}`)
   let productos = []
     
   for (let index = 0; index < 5; index++){
@@ -35,6 +37,7 @@ routerProductosTest.get('/', async (req, res)=>{
 })
 
 routerProductos.get('/:id?', async (req, res)=>{
+  logger.info(`[${req.method}] => ${req.path}`)
   if(req.params.id){
     contenidoProductos.getById(req.params.id).then(resp => res.send(resp))
   }else{
@@ -43,14 +46,17 @@ routerProductos.get('/:id?', async (req, res)=>{
 })
 
 routerProductos.post('/', adm, async (req, res)=>{
+  logger.info(`[${req.method}] => ${req.path}`)
   contenidoProductos.save(req.body).then(resp => res.json(resp))
 })
 
 routerProductos.delete('/:id', adm, async (req, res)=>{
+  logger.info(`[${req.method}] => ${req.path}`)
   contenidoProductos.deleteById(req.params.id).then(resp => res.json(resp))
 })
 
 routerProductos.put('/:id', adm, async (req, res)=>{
+  logger.info(`[${req.method}] => ${req.path}`)
   contenidoProductos.changeById(req.params.id, req.body).then(resp => res.json(resp))
 })
 
