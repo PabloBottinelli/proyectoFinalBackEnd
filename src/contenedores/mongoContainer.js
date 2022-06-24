@@ -1,11 +1,11 @@
 const mongoose = require('mongoose')
-const { DB_CONFIG } = require('../../config')
+const config = require('../../config')
 
 let count = 0
 class mongoContainer{
     constructor(collection, schema){
         if(!count) {
-            mongoose.connect(DB_CONFIG.mongodb.url, { useNewUrlParser: true }).then(() => console.log("Conexion con la base de datos establecida"))
+            mongoose.connect(config.credenciales.DB_CONFIG.mongodb.url, { useNewUrlParser: true }).then(() => console.log("Conexion con la base de datos establecida"))
         }
         count++
         this.model = mongoose.model(collection, schema)
