@@ -1,0 +1,180 @@
+---- Node Modo Cluster ----
+
+node ./src/index.js -p 8089 -m CLUSTER
+
+Nombre de imagen               PID Nombre de sesión Núm. de ses Uso de memor
+========================= ======== ================ =========== ============
+node.exe                      4260 Console                    2   116.044 KB
+node.exe                     16356 Console                    2    99.880 KB
+node.exe                     17616 Console                    2    99.912 KB
+node.exe                     17084 Console                    2    99.632 KB
+node.exe                     18232 Console                    2    99.932 KB
+node.exe                     14656 Console                    2    97.944 KB
+node.exe                     14964 Console                    2    98.968 KB
+node.exe                     17820 Console                    2    98.108 KB
+node.exe                     17308 Console                    2    99.300 KB
+
+---- Node Modo Fork ----
+
+node ./src/index.js -p 8089 
+
+Nombre de imagen               PID Nombre de sesión Núm. de ses Uso de memor
+========================= ======== ================ =========== ============
+node.exe                     17212 Console                    2   115.676 KB
+
+---- Nodemon Modo Cluster ----
+
+nodemon ./src/index.js -p 8089 -m CLUSTER
+
+Nombre de imagen               PID Nombre de sesión Núm. de ses Uso de memor
+========================= ======== ================ =========== ============
+node.exe                      8796 Console                    2    33.068 KB
+node.exe                      6384 Console                    2   115.616 KB
+node.exe                     11872 Console                    2   107.648 KB
+node.exe                     14476 Console                    2   107.392 KB
+node.exe                      3460 Console                    2   107.100 KB
+node.exe                     15536 Console                    2   107.168 KB
+node.exe                      6892 Console                    2   107.440 KB
+node.exe                      2484 Console                    2   107.328 KB
+node.exe                     10104 Console                    2   107.048 KB
+node.exe                     16368 Console                    2   107.388 KB
+
+---- Nodemon Modo Fork ----
+
+nodemon ./src/index.js -p 8089 
+
+Nombre de imagen               PID Nombre de sesión Núm. de ses Uso de memor
+========================= ======== ================ =========== ============
+node.exe                     14456 Console                    2    30.696 KB
+node.exe                     12396 Console                    2   115.756 KB
+
+---- Forever ----
+
+forever start ./src/index.js -p 8089
+
+tasklist /fi "imagename eq node.exe"
+
+Nombre de imagen               PID Nombre de sesión Núm. de ses Uso de memor
+========================= ======== ================ =========== ============
+node.exe                      8944 Console                    2    40.540 KB
+node.exe                     14184 Console                    2   115.612 KB
+
+forever list
+
+(node:16396) Warning: Accessing non-existent property 'padLevels' of module exports inside circular dependency
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:16396) Warning: Accessing non-existent property 'padLevels' of module exports inside circular dependency
+info:    Forever processes running
+data:        uid  command                            script                                                                                           forever pid 
+  id logfile                          uptime
+data:    [0] IH5Q "C:\Program Files\nodejs\node.exe" C:\Users\Pablo\OneDrive\Escritorio\Escritorio\Coder House\Back End\proyecto\src\index.js -p 8089 8944    14184    C:\Users\Pablo\.forever\IH5Q.log 0:0:0:46.006
+
+---- pm2 ----
+
+pm2 start ./src/index.js --name="ServerFork" --watch 
+pm2 start ./src/index.js --name="ServerCluster" --watch -i 4 
+
+tasklist /fi "imagename eq node.exe"
+
+Nombre de imagen               PID Nombre de sesión Núm. de ses Uso de memor
+========================= ======== ================ =========== ============
+node.exe                      1636 Console                    3    38.312 KB
+node.exe                      5760 Console                    3    81.784 KB
+node.exe                      5800 Console                    3   121.840 KB
+node.exe                     16816 Console                    3   120.728 KB
+node.exe                      1896 Console                    3   121.976 KB
+node.exe                     12840 Console                    3   121.660 KB
+
+pm2 list
+
+┌─────┬──────────────────┬─────────────┬─────────┬─────────┬──────────┬────────┬──────┬───────────┬──────────┬──────────┬──────────┬──────────┐
+│ id  │ name             │ namespace   │ version │ mode    │ pid      │ uptime │ ↺    │ status    │ cpu      │ mem      │ user     │ watching │
+├─────┼──────────────────┼─────────────┼─────────┼─────────┼──────────┼────────┼──────┼───────────┼──────────┼──────────┼──────────┼──────────┤
+│ 1   │ ServerCluster    │ default     │ 1.0.0   │ cluster │ 13716    │ 7s     │ 1    │ online    │ 0%       │ 119.0mb  │ Pablo    │ enabled  │
+│ 2   │ ServerCluster    │ default     │ 1.0.0   │ cluster │ 16616    │ 7s     │ 1    │ online    │ 0%       │ 119.1mb  │ Pablo    │ enabled  │
+│ 3   │ ServerCluster    │ default     │ 1.0.0   │ cluster │ 6876     │ 7s     │ 1    │ online    │ 0%       │ 118.9mb  │ Pablo    │ enabled  │
+│ 4   │ ServerCluster    │ default     │ 1.0.0   │ cluster │ 5284     │ 7s     │ 1    │ online    │ 0%       │ 119.3mb  │ Pablo    │ enabled  │
+│ 0   │ ServerFork       │ default     │ 1.0.0   │ fork    │ 9560     │ 7s     │ 1    │ online    │ 0%       │ 117.3mb  │ Pablo    │ enabled  │
+└─────┴──────────────────┴─────────────┴─────────┴─────────┴──────────┴────────┴──────┴───────────┴──────────┴──────────┴──────────┴──────────┘
+
+pm2 stop all
+
+[PM2] Applying action stopProcessId on app [all](ids: [ 0, 1, 2, 3, 4 ])
+[PM2] [ServerCluster](1) ✓
+[PM2] [ServerFork](0) ✓
+[PM2] [ServerCluster](3) ✓
+[PM2] [ServerCluster](2) ✓
+[PM2] [ServerCluster](4) ✓
+┌─────┬──────────────────┬─────────────┬─────────┬─────────┬──────────┬────────┬──────┬───────────┬──────────┬──────────┬──────────┬──────────┐
+│ id  │ name             │ namespace   │ version │ mode    │ pid      │ uptime │ ↺    │ status    │ cpu      │ mem      │ user     │ watching │
+├─────┼──────────────────┼─────────────┼─────────┼─────────┼──────────┼────────┼──────┼───────────┼──────────┼──────────┼──────────┼──────────┤
+│ 1   │ ServerCluster    │ default     │ 1.0.0   │ cluster │ 0        │ 0      │ 3    │ stopped   │ 0%       │ 0b       │ Pablo    │ disabled │
+│ 2   │ ServerCluster    │ default     │ 1.0.0   │ cluster │ 0        │ 0      │ 3    │ stopped   │ 0%       │ 0b       │ Pablo    │ disabled │
+│ 3   │ ServerCluster    │ default     │ 1.0.0   │ cluster │ 0        │ 0      │ 3    │ stopped   │ 0%       │ 0b       │ Pablo    │ disabled │
+│ 4   │ ServerCluster    │ default     │ 1.0.0   │ cluster │ 0        │ 0      │ 3    │ stopped   │ 0%       │ 0b       │ Pablo    │ disabled │
+│ 0   │ ServerFork       │ default     │ 1.0.0   │ fork    │ 0        │ 0      │ 3    │ stopped   │ 0%       │ 0b       │ Pablo    │ disabled │
+└─────┴──────────────────┴─────────────┴─────────┴─────────┴──────────┴────────┴──────┴───────────┴──────────┴──────────┴──────────┴──────────┘
+
+---- Primer configuracion de nginx ----
+
+http {
+  include       mime.types;
+  default_type  application/octet-stream;
+
+  upstream node_app {
+    server 127.0.0.1:8080;
+  }
+
+  upstream node_randoms {
+    server 127.0.0.1:8081;
+  }
+
+  server {
+    listen       80;
+    server_name  nginx_node;
+    root         ../proyecto/public;
+
+    location /api/randoms {
+      proxy_pass http://node_randoms;
+    }
+        
+    location / {
+      proxy_pass http://node_app;
+    }
+        
+  }
+}
+
+---- Segunda configuracion de nginx ----
+
+http {
+  include       mime.types;
+  default_type  application/octet-stream;
+
+
+  upstream node_app {
+    server 127.0.0.1:8080;
+  }
+
+  upstream node_randoms {
+    server 127.0.0.1:8082;
+    server 127.0.0.1:8083;
+    server 127.0.0.1:8084;
+    server 127.0.0.1:8085;
+  }
+
+  server {
+    listen       80;
+    server_name  nginx_node;
+    root         ../proyecto/public;
+
+    location /api/randoms {
+      proxy_pass http://node_randoms;
+    }
+        
+    location / {
+      proxy_pass http://node_app;
+    }
+        
+  }
+}
