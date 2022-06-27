@@ -118,7 +118,7 @@ const options = {
     m: 'modo'
   },
   default:{
-    puerto: 8080,
+    puerto: config.credenciales.ENV.PORT,
     modo: 'FORK'
   }
 }
